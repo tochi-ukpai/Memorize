@@ -8,56 +8,42 @@
 import SwiftUI
 
 struct ContentView: View {
-    let emojis = ["🚂", "🚀", "🚁", "🚜", "🚗", "🚕", "🚙", "🚎", "🛻", "🚛", "🚲", "🛵", "🏍️", "🛺", "🚟", "🚝", "✈️", "🛥️", "🚢", "🚖", "🚘", "🏎️", "🛫", "⛵️"]
-    @State var emojiCount = 6
+    @State var theme: Theme = .vehicles
     
     var body: some View {
         VStack {
+            Text("Memorize")
+                .font(.title)
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-                    ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
+                    ForEach(theme.emojis.shuffled(), id: \.self) { emoji in
                         CardView(content: emoji)
                             .aspectRatio(2/3, contentMode: .fit)
                     }
                 }
             }
             .foregroundColor(.red)
+            
             Spacer()
             HStack {
-                removeBtn
                 Spacer()
-                addBtn
+                ChangeThemeBtn(theme: .vehicles, changeTheme: { theme = .vehicles })
+                Spacer()
+                ChangeThemeBtn(theme: .buildings, changeTheme: { theme = .buildings })
+                Spacer()
+                ChangeThemeBtn(theme: .flags, changeTheme: { theme = .flags })
+                Spacer()
             }
             .font(.largeTitle)
             .padding(.horizontal)
         }
         .padding(.horizontal)
     }
-    
-    var removeBtn: some View {
-        Button {
-            if emojiCount > 1 {
-                emojiCount -= 1
-            }
-        } label: {
-            Image(systemName: "minus.circle")
-        }
-    }
-    
-    var addBtn: some View {
-        Button {
-            if emojiCount < emojis.count {
-                emojiCount += 1
-            }
-        } label: {
-            Image(systemName: "plus.circle")
-        }
-    }
 }
 
 struct CardView: View {
     var content: String
-    @State var isFaceUp: Bool = false
+    @State var isFaceUp: Bool = true
     let shape =
     RoundedRectangle(cornerRadius: 20)
     
@@ -79,6 +65,53 @@ struct CardView: View {
         
     }
 }
+
+enum Theme: String {
+    case vehicles = "Vehicles"
+    case buildings = "Buildings"
+    case flags = "Flags"
+    
+    var emojis: [String] {
+        switch self {
+        case .flags:
+            return ["🏳️‍⚧️", "🇺🇳", "🇦🇫", "🇦🇽", "🇦🇱", "🇩🇿", "🇦🇮", "🇦🇴", "🇦🇩", "🇦🇼", "🇦🇺", "🇧🇿", "🇧🇦", "🇧🇫", "🇮🇨", "🇨🇳", "🇹🇩", "🇨🇰", "🇨🇷", "🇨🇮", "🇨🇾"]
+        case .buildings:
+            return ["🏚️", "🏢", "🏬", "🏣", "🏤", "🏛️", "💒", "🏨", "🏦", "🏪", "🏥", "🏘️", "🏠", "🛖", "⛺️", "🏕️", "🏡"]
+        case .vehicles:
+            return ["🚂", "🚀", "🚁", "🚜", "🚗", "🚕", "🚙", "🚎", "🛻", "🚛", "🚲", "🛵", "🏍️", "🛺", "🚟", "🚝", "✈️", "🛥️", "🚢", "🚖", "🚘", "🏎️", "🛫", "⛵️"]
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .flags:
+            return "flag"
+        case .buildings:
+            return "house"
+        case .vehicles:
+            return "car"
+        }
+    }
+}
+
+struct ChangeThemeBtn: View {
+    var theme: Theme
+    var changeTheme: () -> Void
+    
+    var body: some View {
+        Button {
+            changeTheme()
+        } label: {
+            VStack {
+                Image(systemName: theme.icon)
+                Text(theme.rawValue)
+                    .font(.caption)
+            }
+        }
+    }
+}
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
