@@ -9,14 +9,28 @@ import SwiftUI
 
 struct ContentView: View {
     @State var theme: Theme = .vehicles
+    @State var emojis: ArraySlice<String> = Theme.vehicles.emojis[...]
+    
+    var cardWidth: CGFloat {
+        switch emojis.count {
+        case 0...4:
+            return 162.5
+        case 5..<10:
+            return 108
+        case 10...16:
+            return 84
+        default:
+            return 65
+        }
+    }
     
     var body: some View {
         VStack {
             Text("Memorize")
                 .font(.title)
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-                    ForEach(theme.emojis.shuffled(), id: \.self) { emoji in
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: cardWidth))]) {
+                    ForEach(emojis, id: \.self) { emoji in
                         CardView(content: emoji)
                             .aspectRatio(2/3, contentMode: .fit)
                     }
@@ -27,11 +41,20 @@ struct ContentView: View {
             Spacer()
             HStack {
                 Spacer()
-                ChangeThemeBtn(theme: .vehicles, changeTheme: { theme = .vehicles })
+                ChangeThemeBtn(theme: .vehicles, changeTheme: {
+                    theme = .vehicles
+                    emojis = theme.emojis.shuffled()[0..<Int.random(in: 4...theme.emojis.count)]
+                })
                 Spacer()
-                ChangeThemeBtn(theme: .buildings, changeTheme: { theme = .buildings })
+                ChangeThemeBtn(theme: .buildings, changeTheme: {
+                    theme = .buildings
+                    emojis = theme.emojis.shuffled()[0..<Int.random(in: 4...theme.emojis.count)]
+                })
                 Spacer()
-                ChangeThemeBtn(theme: .flags, changeTheme: { theme = .flags })
+                ChangeThemeBtn(theme: .flags, changeTheme: {
+                    theme = .flags
+                    emojis = theme.emojis.shuffled()[0..<Int.random(in: 4...theme.emojis.count)]
+                })
                 Spacer()
             }
             .font(.largeTitle)
