@@ -19,7 +19,8 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                 if cards[chosenIndex].content == cards[potentialMatchIndex].content {
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
-                    score += 2
+                    match(card: chosenIndex)
+                    match(card: potentialMatchIndex)
                 } else {
                     seen(card: chosenIndex)
                     seen(card: potentialMatchIndex)
@@ -41,6 +42,12 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         } else {
             cards[cardIndex].isSeen = true
         }
+        cards[cardIndex].seenCount += 1 // EXTRA CREDIT 4: increase number of times card has been seen
+    }
+    
+//    EXTRA CREDIT 4: Deduct reward points per matched card based on number of times card has been seen
+    private mutating func match(card cardIndex: Int) {
+        score += max(3 - cards[cardIndex].seenCount, 1)
     }
     
     init(numberOfPairsOfCards: Int, createCardContent: (Int) -> CardContent) {
@@ -58,6 +65,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         var isFaceUp: Bool = false
         var isMatched: Bool = false
         var isSeen: Bool = false
+        var seenCount: Int = 0 // EXTRA CREDIT 4: Track number of times card has been seen
         var content: CardContent
         var id: Int
     }
